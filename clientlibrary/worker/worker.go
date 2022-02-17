@@ -160,6 +160,9 @@ func (w *Worker) initialize() error {
 		log.Infof("Creating Kinesis client")
 
 		resolver := aws.EndpointResolverWithOptionsFunc(func(service, region string, options ...interface{}) (aws.Endpoint, error) {
+			if w.kclConfig.KinesisEndpoint == "" {
+				return aws.Endpoint{}, &aws.EndpointNotFoundError{}
+			}
 			return aws.Endpoint{
 				PartitionID:   "aws",
 				URL:           w.kclConfig.KinesisEndpoint,
